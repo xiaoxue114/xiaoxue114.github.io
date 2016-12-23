@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>作用域链_闭包</title>
+    <script>
+//        function f() {
+//            var a = 2;
+//            function n() {
+//                var b = 3;
+//                alert(a + b);
+//            }
+//            n();
+//        }
+//        f();
+    </script>
+
+    <script>
+        //作用域链：从自己的作用域向上找，一直到全局作用域停止
+        //查找某个变量：先在本身作用域找，找不到才一级一级向上找，找到就停止，
+        // 如果到全局作用域还没有找到，说明变量未定义：is not defined
+        //作用域链原则：小作用域允许访问大作用域，大作用域不允许访问小作用域
+        //作用域链是在定义的时候确定的，而不是调用运行的时候
+        //就是说作用域是有定义的时候所处的位置决定的
+//        var x = 3;
+//        function f1() {
+//            var y = 4;
+//            console.log(x+y);
+//            function f2() {
+//                var z = 5;
+//                console.log(x+y+z);
+//
+////                console.log(x+y+z+w); //w is not defined
+//            }
+//            f2();
+////            console.log(y+z);  //z is not defined
+//        }
+//        f1();
+//        console.log(y);
+//        f2();
+//        console.log(x+y); //y is not defined
+
+
+    </script>
+
+    <script>
+        //闭包入门经典例子：
+//        function m() {
+//            var a = 3;
+//            n();
+//        }
+//        //n定义位置决定作用域链：n自己作用域--> 全局作用域
+//        function n() {
+//            alert(a);
+//        }
+//        m();
+    </script>
+    <!--<script>-->
+        <!--//一个简单的闭包-->
+        <!--//闭包技术的关键就是：作用域是定义时候确定的-->
+        <!--function f() {-->
+            <!--var b = "bbbb";-->
+            <!--return function() {  //作用域链：自己作用域&ndash;&gt;f作用域&ndash;&gt;全局-->
+                <!--return b;-->
+            <!--}-->
+        <!--}-->
+        <!--var out = f(); //函数表达式的值等价于return 的结果-->
+        <!--var result = out();-->
+        <!--console.log(result);-->
+    <!--</script>-->
+    <script>
+        //作用域链是在定义的时候确定的，确定了有权力访问哪些变量，但是变量的值是运行的时候确定的
+//        function f() {
+//            var b = "bbbb";
+//            function n() {
+//                return b;
+//            }
+//            b = "hello world";
+//            return n;
+//        }
+//        console.log(f()());
+    </script>
+    <script>
+//作用域链是在定义的时候确定的，确定了有权力访问哪些变量，但是变量的值是运行的时候确定的
+        function fun1() {
+            var a = [];
+            var i;
+            for(i=0;i<3;i++) {
+                //右边最外层：立执行函数/自调用函数
+                //for循环每次把当前i的值作为参数传递给上面的匿名函数参数，x等于i
+                //里面是原来的匿名函数，函数体return x;
+                //a[i]最后被赋值的结果还是里层匿名函数体function () {return x};
+                //与之前不同：外层嵌套了一层函数，作用域链多了一级
+                //实际运行a[i]()，x自身找不到，到上一级，上一级匿名函数形参，形参的值等于实参的值
+                //达到了区分目的
+                a[i] = (function(x) {
+                    //var x; 等价于内部一个局部变量
+//                    x=0;
+//                    x=1;
+//                    x=2;
+                    console.log(x);
+                    return function() {
+                        return x;
+                    }
+                })(i);
+            }
+            console.log(a[0]);
+            return a;
+        }
+        var arr = fun1();
+        console.log(arr[0]());
+        console.log(arr[1]());
+        console.log(arr[2]());
+(function () {alert(123);})();
+    </script>
+    <script>
+//        function fun1() {
+//            var a = [];
+//            var i=0;
+////            for(i=0;i<3;i++) {
+////                a[i] = function() {
+////                    return i;
+////                };
+////            }
+//            a[0] = function() {
+//                return i;
+//            };
+//            i++;
+//            a[1] = function() {
+//                return i;
+//            };
+//            i++;
+//            a[2] = function() {
+//                return i;
+//            };
+//            i++;
+//            return a;
+//        }
+//        var arr = fun1();
+//        console.log(arr[0]());
+//        console.log(arr[1]());
+//        console.log(arr[2]());
+    </script>
+    <script>
+        var a = [];
+        var i;
+        for(i = 0;i<3;i++) {
+            a[i] = (function() {return function() {return "s";}})();
+        }
+        console.log(a); //a = [function, function, function];
+        a[0]();
+
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>

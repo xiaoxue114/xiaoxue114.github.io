@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .drag_sourse {
+            width: 300px;
+            height: 300px;
+            background-color: red;
+        }
+        .drag_dest {
+            margin-top: 20px;
+            width: 400px;
+            height: 400px;
+            background-color: green;
+
+        }
+    </style>
+    <script>
+        //绑定在被拖拽元素的事件：
+        //ondragstart: 拖拽开始一刻触发，只触发一次
+        function dragStart(e) {
+
+            var evt = e || window.event;
+//            var a = {
+//                "key": evt.target.src
+//            };
+            console.log(evt);
+            var imgE=document.querySelector("img#test");
+            evt.dataTransfer.setDragImage(imgE, 20, 20);
+            evt.dataTransfer.setData("src", evt.target.src);
+
+            console.log(evt);
+            console.log("拖拽发生");
+        }
+        //ondrag 拖拽过程中一直触发
+        function drag() {
+            console.log("拖拽中...");
+        }
+        //ondragend: 拖拽结束事件：拖拽完成鼠标释放触发
+        function dragEnd() {
+            console.log("拖拽结束");
+        }
+        //ondragenter: 有元素（设置了可拖拽属性的元素）进入自己的领地的时候触发
+        function dragEnter() {
+            console.log("注意：目标敌人出现！");
+        }
+        //ondragover: 被拖拽元素进入目标元素，拖拽事件不结束，一直持续触发此事件
+        //事件触发结束场景：1.离开目标，2.拖拽结束
+        function dragOver(event) {
+            var evt = event || window.event;
+            console.log("赶快出去！！");
+            //阻止默认事件，加了这句话ondrop 才会触发
+            evt.preventDefault();
+            evt.stopPropagation();
+            return false;
+        }
+
+        //ondragleave: 与ondragenter对应，鼠标离开目标区域那一刻触发
+        function dragLeave() {
+            console.log("永远别再回来了");
+
+            return false;
+        }
+        //ondrop: 拖拽元素在目标去没有离开，鼠标释放拖拽结束
+        function drop(event) {
+            var evt = event || window.event;
+            //阻止默认行为各种兼容性写法,防止图片在浏览器自动打开
+            evt.preventDefault();
+            evt.stopPropagation();
+//            evt.returnValue=false;
+
+            var info = evt.dataTransfer.getData("src");
+            console.log(evt);
+            var imgE = document.createElement("img");
+            imgE.src=info;
+            var object = evt.target || evt.srcElement;
+            object.appendChild(imgE);
+            console.log("下一行是info-------------");
+            console.log(info);
+            console.log("一山不容二虎，走开！");
+            console.log(evt.dataTransfer.files);
+            console.log(evt.dataTransfer.files.length); //拖拽文件的 个数
+            console.log(evt.dataTransfer.files[0].name); //文件名称
+            console.log(evt.dataTransfer.files[0].size); //文件大小，注意单位是B，转化
+            console.log(evt.dataTransfer.files[0].type); //文件类型
+            var uploadFiles = evt.dataTransfer.files;  //用户上传的文件
+            var fileObject = new FileReader(); //创建文件阅读对象
+            fileObject.readAsDataURL(uploadFiles[0]);  //base64格式编码
+            //文件转化读取完毕触发这个事件
+            fileObject.onload = function() {
+                console.log(this.result);
+                console.log(fileObject);
+                var imgElem = document.querySelector("#test");
+                imgElem.src = this.result;
+
+            };
+
+
+        }
+
+        //dataTransfer: 拖拽事件中的专用对象，被拖拽元素与目标元素传递信息的媒介
+        //event.dataTransfer: 事件对象下面的一个对象
+        //setData(),设置信息,一般在被 拖拽元素绑定的事件内部设置
+        //getData()， 获取信息，一般在目标元素绑定的事件内部获取
+
+        //拖拽本地文件系统的文件event.dataTransfer.files
+
+        function readFile() {
+
+        }
+    </script>
+</head>
+<body>
+选择文件：<input type="file">
+<button onclick="readFile()">读取文件</button>
+<div id="img">aaa</div>
+ <img src="../img/baibu.png" id="test">
+  <img class="drag_sourse"
+       src="../img/ok.png"
+       draggable="true" ondragstart="dragStart(event)"
+          ondrag="drag(this)" ondragend="dragEnd()"
+          >我是被拖的</img>
+  <div class="drag_dest" ondragenter="dragEnter()"
+       ondragover="dragOver(event)" ondragleave="dragLeave()" ondrop="drop(event)"
+          >我是目的地</div>
+
+
+</body>
+</html>
